@@ -1,7 +1,27 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import { v4 as uuid } from "uuid";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const resolversMap: Record<
+  string,
+  {
+    resolve: (v: any) => void;
+    reject: (e: Error) => void;
+  }
+> = {};
+const shuoldBePollfyilled = () => {
+  const id = uuid();
+
+  // you should upgrade Typescript to v5.4
+  // https://github.com/microsoft/TypeScript/issues/56483
+  const { promise, resolve, reject } = Promise.withResolvers<any>();
+
+  resolversMap[id] = { resolve, reject };
+
+  return promise;
+};
 
 export default function Home() {
   return (
@@ -43,6 +63,10 @@ export default function Home() {
           priority
         />
       </div>
+
+      <button onClick={() => shuoldBePollfyilled()}>
+        Click to Find Pollyfill
+      </button>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
